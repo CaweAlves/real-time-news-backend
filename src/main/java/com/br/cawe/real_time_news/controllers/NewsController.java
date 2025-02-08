@@ -4,6 +4,7 @@ import com.br.cawe.real_time_news.entities.NewsItem;
 import com.br.cawe.real_time_news.listeners.NewsListener;
 import com.br.cawe.real_time_news.services.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,7 +28,7 @@ public class NewsController implements NewsListener {
         this.newsService.registerListener(this);
     }
 
-    @GetMapping("/news")
+    @GetMapping(path = "/news", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribeToNews() {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         emitters.add(emitter);
@@ -36,7 +37,6 @@ public class NewsController implements NewsListener {
         emitter.onTimeout(() -> emitters.remove(emitter));
         emitter.onError((e) -> emitters.remove(emitter));
 
-        // Send existing news on subscription
         newsService.getNewsItems().forEach(newsItem -> {
             try {
                 emitter.send(SseEmitter.event().name("NEWS").data(newsItem.toString()));
@@ -63,7 +63,7 @@ public class NewsController implements NewsListener {
         List<SseEmitter> deadEmitters = new ArrayList<>();
         emitters.forEach(emitter -> {
             try {
-                emitter.send(SseEmitter.event().name("NEWS").data(newsItem.toString()));
+                emitter.send(SseEmitter.event().name(" NEWS").data(newsItem.toString()));
             } catch (Exception e) {
                 deadEmitters.add(emitter);
             }

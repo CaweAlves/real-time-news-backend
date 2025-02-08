@@ -27,10 +27,9 @@ public class NewsItem {
 
     @Override
     public String toString() {
-        return "NewsItem{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", dateTime=" + dateTime +
-                '}';
+        return "{" +
+                "\"title\":\"" + title + "\"," +
+                "\"content\":\"" + content + "\"" +
+                "}";
     }
 }
